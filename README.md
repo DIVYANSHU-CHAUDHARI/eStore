@@ -1,4 +1,4 @@
-# ecommerceApp
+# EcommerceApp
 Simple e-commerce platform,  having capability of handling buyers, orders and products.
 
 **Design Overview**:
