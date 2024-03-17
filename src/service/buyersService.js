@@ -7,13 +7,23 @@ const createBuyer = async (buyerData) => {
   const { street, city, state, country, pincode } = address;
   const transaction = await db.transaction();
   try {
-    const createdAddress = await Address.create({ street, city, state, country, pincode });
+
+    if (!name) {
+      throw new Error('Buyer name must be provided');
+    }
+  
+    if (!street || !city || !state || !country || !pincode) {
+      throw new Error('All address fields must be provided');
+    }
+    
+    const createdAddress = await Address.create({ street, city, state, country, pincode }, { transaction });
     const createdAddressId = createdAddress.id;
-    const buyer = await Buyer.create({ name, addressId: createdAddressId });
+    const buyer = await Buyer.create({ name, addressId: createdAddressId }, { transaction });
     await transaction.commit();
     return buyer;
   } catch (error) {
     await transaction.rollback();
+    console.log(error);
     throw error;
   }
 };

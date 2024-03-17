@@ -1,4 +1,4 @@
-const buyerService = require('../service/buyersservice');
+const buyerService = require('../service/buyersService');
 
 const createBuyer = async (req, res) => {
     try {

@@ -9,6 +9,10 @@ const createOrder = async (orderData) => {
   const { buyerId, productId, quantity, paymentMode} = orderData;
   const transaction = await db.transaction();
   try {
+
+    if (!buyerId || !productId || !quantity || !paymentMode) {
+      throw new Error('Missing required fields (buyerId, productId, quantity, paymentMode).');
+    }
     const product = await Product.findByPk(productId);
     const buyer = await Buyer.findByPk(buyerId);
     const pickupAddress = await Address.findByPk(product.pickupAddressId);
@@ -33,11 +37,12 @@ const createOrder = async (orderData) => {
         throw new Error('Order failed because product stock is insufficient');
     }
 
-    const order =  await Order.create({buyerId, productId, quantity, paymentMode});
+    const order =  await Order.create({buyerId, productId, quantity, paymentMode}, { transaction });
     await transaction.commit();
     return order;
   } catch (error) {
     await transaction.rollback();
+    console.log(error);
     throw error;
   }
 };
